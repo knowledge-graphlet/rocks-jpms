@@ -21,19 +21,66 @@
     </properties>
     <build>
         <plugins>
-            <!-- prevent creating an "empty" jar for this module -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.4.2</version>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
+                    <execution>
+                        <id>unpack-rocksdb-jar</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.rocksdb</groupId>
+                                    <artifactId>rocksdbjni</artifactId>
+                                    <version>${rocksdbjni.version}</version>
+                                    <type>jar</type>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-rocksdb-natives</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                            <artifactItems>
+                                <!-- Unpack all platforms -->
+                                <artifactItem>
+                                    <groupId>org.rocksdb</groupId>
+                                    <artifactId>rocksdbjni</artifactId>
+                                    <version>${rocksdbjni.version}</version>
+                                    <classifier>osx</classifier>
+                                    <type>jar</type>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.rocksdb</groupId>
+                                    <artifactId>rocksdbjni</artifactId>
+                                    <version>${rocksdbjni.version}</version>
+                                    <classifier>linux64</classifier>
+                                    <type>jar</type>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.rocksdb</groupId>
+                                    <artifactId>rocksdbjni</artifactId>
+                                    <version>${rocksdbjni.version}</version>
+                                    <classifier>win64</classifier>
+                                    <type>jar</type>
+                                </artifactItem>
+                            </artifactItems>
+                            <!-- Extract only native libraries -->
+                            <includes>**/*.jnilib,**/*.so,**/*.dll</includes>
+                        </configuration>
+                    </execution>
                     <execution>
                         <id>sources</id>
                         <goals>
@@ -64,38 +111,12 @@
                 <artifactId>moditect-maven-plugin</artifactId>
                 <version>1.3.0.Final</version>
                 <executions>
-                    <execution>
-                        <!--
+                    <!--
 RocksDB JNI 10.4.2 uses the “slim Java bindings” strategy: the main rocksdbjni JAR contains only the
 Java classes (roughly ~300 KB) and no embedded native libraries. The native binaries are provided
 separately per platform, rather than bundled into the main JAR. This was a change from earlier
 versions where the JAR included all platform-specific natives in one fil
-                        -->
-                        <id>add-module-info-no-jni</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>add-module-info</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/modules</outputDirectory>
-                            <modules>
-                                <module>
-                                    <artifact>
-                                        <groupId>org.rocksdb</groupId>
-                                        <artifactId>rocksdbjni</artifactId>
-                                        <version>${rocksdbjni.version}</version>
-                                    </artifact>
-                                    <moduleInfoSource>
-                                        module dev.ikm.rocksdb.jpms {
-                                            requires jdk.unsupported;
-                                            exports org.rocksdb;
-                                            exports org.rocksdb.util;
-                                        }
-                                    </moduleInfoSource>
-                                </module>
-                            </modules>
-                        </configuration>
-                    </execution>
+                    -->
                     <execution>
                         <id>add-module-info-osx</id>
                         <phase>generate-resources</phase>
@@ -114,9 +135,9 @@ versions where the JAR included all platform-specific natives in one fil
                                     </artifact>
                                     <moduleInfoSource>
                                         module dev.ikm.rocksdb.jpms {
-                                        requires jdk.unsupported;
-                                        exports org.rocksdb;
-                                        exports org.rocksdb.util;
+                                            requires jdk.unsupported;
+                                            exports org.rocksdb;
+                                            exports org.rocksdb.util;
                                         }
                                     </moduleInfoSource>
                                 </module>
@@ -141,9 +162,9 @@ versions where the JAR included all platform-specific natives in one fil
                                     </artifact>
                                     <moduleInfoSource>
                                         module dev.ikm.rocksdb.jpms {
-                                        requires jdk.unsupported;
-                                        exports org.rocksdb;
-                                        exports org.rocksdb.util;
+                                            requires jdk.unsupported;
+                                            exports org.rocksdb;
+                                            exports org.rocksdb.util;
                                         }
                                     </moduleInfoSource>
                                 </module>
@@ -168,9 +189,9 @@ versions where the JAR included all platform-specific natives in one fil
                                     </artifact>
                                     <moduleInfoSource>
                                         module dev.ikm.rocksdb.jpms {
-                                        requires jdk.unsupported;
-                                        exports org.rocksdb;
-                                        exports org.rocksdb.util;
+                                            requires jdk.unsupported;
+                                            exports org.rocksdb;
+                                            exports org.rocksdb.util;
                                         }
                                     </moduleInfoSource>
                                 </module>
@@ -185,6 +206,19 @@ versions where the JAR included all platform-specific natives in one fil
                 <version>3.1.0</version>
                 <executions>
                     <execution>
+                        <id>unzip-jar-into-classes</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <unzip src="${project.build.directory}/modules/rocksdbjni-${rocksdbjni.version}-osx.jar"
+                                       dest="${project.build.outputDirectory}"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>rename-moditect-outputs</id>
                         <phase>package</phase>
                         <configuration>
@@ -193,8 +227,6 @@ versions where the JAR included all platform-specific natives in one fil
                                       tofile="${project.build.directory}/rocksdbjni-${rocksdbjni.version}.r1-SNAPSHOT-javadoc.jar"/>
                                 <move file="${project.build.directory}/dependency/rocksdbjni-${rocksdbjni.version}-sources.jar"
                                       tofile="${project.build.directory}/rocksdbjni-${rocksdbjni.version}.r1-SNAPSHOT-sources.jar"/>
-                                <move file="${project.build.directory}/modules/rocksdbjni-${rocksdbjni.version}.jar"
-                                      tofile="${project.build.directory}/rocksdbjni-${rocksdbjni.version}.r1-SNAPSHOT.jar"/>
                                 <move file="${project.build.directory}/modules/rocksdbjni-${rocksdbjni.version}-linux64.jar"
                                       tofile="${project.build.directory}/rocksdbjni-${rocksdbjni.version}.r1-SNAPSHOT-linux64.jar"/>
                                 <move file="${project.build.directory}/modules/rocksdbjni-${rocksdbjni.version}-osx.jar"
