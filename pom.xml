@@ -12,8 +12,8 @@
     <groupId>dev.ikm.jpms</groupId>
     <artifactId>rocks-jpms</artifactId>
     <packaging>pom</packaging>
+    <name>Rocks JPMS ${project.version}</name>
 
-    <name>Rocks JPMS</name>
     <description>JPMS wrappers for the RocksDB required JNI libraries and dependencies.</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
