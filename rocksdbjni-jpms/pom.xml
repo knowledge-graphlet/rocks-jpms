@@ -219,7 +219,7 @@ versions where the JAR included all platform-specific natives in one fil
                     </execution>
                     <execution>
                         <id>rename-moditect-outputs</id>
-                        <phase>package</phase>
+                        <phase>prepare-package</phase>
                         <configuration>
                             <target>
                                 <move file="${project.build.directory}/dependency/rocksdbjni-${rocksdbjni.version}-javadoc.jar"
@@ -285,4 +285,72 @@ versions where the JAR included all platform-specific natives in one fil
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>macos-sign</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.5.1</version>
+                        <executions>
+                            <execution>
+                                <id>explode-osx-jar</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>bash</executable>
+                                    <arguments>
+                                        <argument>${project.basedir}/src/main/resources/scripts/explode_osx_jar.sh</argument>
+                                        <argument>${project.build.directory}/rocksdbjni-${project.version}-osx.jar</argument>
+                                        <argument>${project.build.directory}/signed-osx</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <!-- ... existing code ... -->
+                            <execution>
+                                <id>codesign-osx-natives</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>bash</executable>
+                                    <arguments>
+                                        <argument>${project.basedir}/src/main/resources/scripts/codesign_osx_natives.sh</argument>
+                                        <argument>${project.build.directory}/signed-osx</argument>
+                                        <argument>${mac.signing.identity}</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <!-- ... existing code ... -->
+                            <execution>
+                                <id>repack-osx-jar</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>bash</executable>
+                                    <arguments>
+                                        <argument>${project.basedir}/src/main/resources/scripts/repack_osx_jar.sh</argument>
+                                        <argument>${project.build.directory}/signed-osx</argument>
+                                        <argument>${project.build.directory}/rocksdbjni-${project.version}-osx.jar</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
