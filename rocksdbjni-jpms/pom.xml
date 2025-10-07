@@ -1,6 +1,7 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>dev.ikm.jpms</groupId>
         <artifactId>rocks-jpms</artifactId>
@@ -9,15 +10,17 @@
 
     <groupId>dev.ikm.jpms</groupId>
     <artifactId>rocksdbjni-jpms</artifactId>
-    <name>rocksdbjni-jpms</name>
-
     <version>10.4.2.r1-SNAPSHOT</version>
     <packaging>jar</packaging>
+
+    <name>rocksdbjni-jpms</name>
     <description>JPMS wrapper for the RocksDB JNI libraries.</description>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <rocksdbjni.version>10.4.2</rocksdbjni.version>
     </properties>
+
     <build>
         <plugins>
             <plugin>
@@ -285,6 +288,7 @@ versions where the JAR included all platform-specific natives in one fil
             </plugin>
         </plugins>
     </build>
+
     <profiles>
         <profile>
             <id>macos-sign</id>

@@ -1,20 +1,21 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>dev.ikm.jpms</groupId>
         <artifactId>rocks-jpms</artifactId>
         <version>0.1.0-SNAPSHOT</version>
     </parent>
+
     <!-- Choose coordinates you control -->
     <groupId>dev.ikm.jpms</groupId>
     <artifactId>jna-platform-jpms</artifactId>
     <version>5.14.0-r2-SNAPSHOT</version>
-    <name>JNA Platform JPMS wrapper</name>
-    <description>Adds module-info to net.java.dev.jna:jna-platform:5.14.0 for jlink.</description>
     <packaging>jar</packaging>
 
+    <name>JNA Platform JPMS wrapper</name>
+    <description>Adds module-info to net.java.dev.jna:jna-platform:5.14.0 for jlink.</description>
 
     <properties>
         <maven.compiler.release>25</maven.compiler.release>
