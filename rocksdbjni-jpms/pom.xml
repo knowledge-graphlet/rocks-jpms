@@ -127,6 +127,7 @@ versions where the JAR included all platform-specific natives in one fil
                         </goals>
                         <configuration>
                             <outputDirectory>${project.build.directory}/modules</outputDirectory>
+                            <overwriteExistingFiles>true</overwriteExistingFiles>
                             <modules>
                                 <module>
                                     <artifact>

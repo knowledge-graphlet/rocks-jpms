@@ -37,6 +37,7 @@
                             <goal>add-module-info</goal>
                         </goals>
                         <configuration>
+                            <overwriteExistingFiles>true</overwriteExistingFiles>
                             <modules>
                                 <module>
                                     <artifact>
